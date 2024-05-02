@@ -13,10 +13,6 @@ const AppDataSource = new DataSource({
     entities: [Day, Note, Hometask]
 });
 
-AppDataSource.initialize().then(() => {
-    console.log('Connected to Postgres successfully!');
-}).catch(error => console.log(error));
-
 const dayRepo = AppDataSource.getRepository(Day);
 const noteRepo = AppDataSource.getRepository(Note);
 const hometaskRepo = AppDataSource.getRepository(Hometask);
