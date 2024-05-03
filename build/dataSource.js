@@ -7,11 +7,7 @@ const note_entity_1 = require("./entities/note.entity");
 const hometask_entity_1 = require("./entities/hometask.entity");
 const AppDataSource = new typeorm_1.DataSource({
     type: "postgres",
-    host: process.env.DB_HOST,
-    port: +process.env.DB_PORT,
-    username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
+    url: process.env.POSTGRES_URL,
     entities: [day_entity_1.Day, note_entity_1.Note, hometask_entity_1.Hometask]
 });
 exports.AppDataSource = AppDataSource;
