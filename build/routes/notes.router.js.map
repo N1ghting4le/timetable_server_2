@@ -1,0 +1,1 @@
+{"version":3,"file":"notes.router.js","sourceRoot":"","sources":["../../src/routes/notes.router.ts"],"names":[],"mappings":";;;;;AAAA,qCAAiC;AACjC,uFAA8D;AAE9D,MAAM,WAAW,GAAG,IAAA,gBAAM,GAAE,CAAC;AAE7B,WAAW,CAAC,IAAI,CAAC,GAAG,EAAE,0BAAe,CAAC,QAAQ,CAAC,CAAC;AAChD,WAAW,CAAC,MAAM,CAAC,GAAG,EAAE,0BAAe,CAAC,UAAU,CAAC,CAAC;AAEpD,kBAAe,WAAW,CAAC"}
