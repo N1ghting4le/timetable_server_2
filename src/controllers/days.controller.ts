@@ -10,7 +10,8 @@ const daysController = {
             .then(() => dayRepo.save(dayRepo.create(req.body)))
             .then(() => res.send({ message: "success" }))
             .catch((err) => error(err, res))
-            .finally(() => AppDataSource.destroy());
+            .finally(() => AppDataSource.destroy())
+            .catch((err) => error(err, res));
     },
 
     getDays: (req: Request, res: Response) => {
@@ -22,7 +23,8 @@ const daysController = {
             }))
             .then(response => res.send(Object.values(Object.groupBy(response, ({ weekNum }) => weekNum))))
             .catch((err) => error(err, res))
-            .finally(() => AppDataSource.destroy());
+            .finally(() => AppDataSource.destroy())
+            .catch((err) => error(err, res));
     }
 };
 

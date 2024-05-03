@@ -11,14 +11,16 @@ const notesController = {
             .then(() => dataSource_1.noteRepo.save(dataSource_1.noteRepo.create(req.body)))
             .then(() => res.send({ message: "success" }))
             .catch((err) => (0, error_1.default)(err, res))
-            .finally(() => dataSource_1.AppDataSource.destroy());
+            .finally(() => dataSource_1.AppDataSource.destroy())
+            .catch((err) => (0, error_1.default)(err, res));
     },
     deleteNote: (req, res) => {
         dataSource_1.AppDataSource.initialize()
             .then(() => dataSource_1.noteRepo.delete(req.body.id))
             .then(() => res.send({ message: "success" }))
             .catch((err) => (0, error_1.default)(err, res))
-            .finally(() => dataSource_1.AppDataSource.destroy());
+            .finally(() => dataSource_1.AppDataSource.destroy())
+            .catch((err) => (0, error_1.default)(err, res));
     }
 };
 exports.default = notesController;
