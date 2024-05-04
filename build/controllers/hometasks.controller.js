@@ -7,20 +7,18 @@ const dataSource_1 = require("../dataSource");
 const error_1 = __importDefault(require("../error"));
 const hometasksController = {
     postHometask: (req, res) => {
-        dataSource_1.AppDataSource.initialize()
+        (0, dataSource_1.connect)()
             .then(() => dataSource_1.hometaskRepo.save(dataSource_1.hometaskRepo.create(req.body)))
             .then(() => res.send({ message: "success" }))
             .catch((err) => (0, error_1.default)(err, res))
-            .finally(() => dataSource_1.AppDataSource.destroy())
-            .catch((err) => (0, error_1.default)(err, res));
+            .finally(dataSource_1.disconnect);
     },
     deleteHometask: (req, res) => {
-        dataSource_1.AppDataSource.initialize()
+        (0, dataSource_1.connect)()
             .then(() => dataSource_1.hometaskRepo.delete(req.body.id))
             .then(() => res.send({ message: "success" }))
             .catch((err) => (0, error_1.default)(err, res))
-            .finally(() => dataSource_1.AppDataSource.destroy())
-            .catch((err) => (0, error_1.default)(err, res));
+            .finally(dataSource_1.disconnect);
     }
 };
 exports.default = hometasksController;

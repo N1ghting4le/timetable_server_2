@@ -13,4 +13,12 @@ const dayRepo = AppDataSource.getRepository(Day);
 const noteRepo = AppDataSource.getRepository(Note);
 const hometaskRepo = AppDataSource.getRepository(Hometask);
 
-export { AppDataSource, dayRepo, noteRepo, hometaskRepo };
+const connect = () => AppDataSource.initialize();
+
+const disconnect = () => {
+    if (AppDataSource.isInitialized) {
+        AppDataSource.destroy();
+    }
+}
+
+export { connect, disconnect, dayRepo, noteRepo, hometaskRepo };
