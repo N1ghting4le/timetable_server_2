@@ -4,27 +4,18 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 require("core-js/proposals/array-grouping-v2");
-const dataSource_1 = require("../dataSource");
-const error_1 = __importDefault(require("../error"));
+const dataSource_1 = __importDefault(require("../dataSource"));
+const day_entity_1 = require("../entities/day.entity");
 const daysController = {
     resetDays: (req, res) => {
-        (0, dataSource_1.connect)()
-            .then(() => dataSource_1.dayRepo.clear())
-            .then(() => dataSource_1.dayRepo.save(dataSource_1.dayRepo.create(req.body)))
-            .then(() => res.send({ message: "success" }))
-            .catch((err) => (0, error_1.default)(err, res))
-            .finally(dataSource_1.disconnect);
+        new dataSource_1.default(day_entity_1.Day, res).replaceWith(req.body);
     },
     getDays: (req, res) => {
-        (0, dataSource_1.connect)()
-            .then(() => dataSource_1.dayRepo.find({
+        new dataSource_1.default(day_entity_1.Day, res).getMany({
             order: {
                 date: "ASC"
             }
-        }))
-            .then(response => res.send(Object.values(Object.groupBy(response, ({ weekNum }) => weekNum))))
-            .catch((err) => (0, error_1.default)(err, res))
-            .finally(dataSource_1.disconnect);
+        }, response => Object.values(Object.groupBy(response, ({ weekNum }) => weekNum)));
     }
 };
 exports.default = daysController;

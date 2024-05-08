@@ -1,22 +1,14 @@
-import { connect, disconnect, hometaskRepo } from "../dataSource";
-import error from "../error";
+import Connection from "../dataSource";
+import { Hometask } from "../entities/hometask.entity";
 import { Request, Response } from "express";
 
 const hometasksController = {
     postHometask: (req: Request, res: Response) => {
-        connect()
-            .then(() => hometaskRepo.save(hometaskRepo.create(req.body)))
-            .then(() => res.send({ message: "success" }))
-            .catch((err) => error(err, res))
-            .finally(disconnect);
+        new Connection(Hometask, res).add(req.body);
     },
 
     deleteHometask: (req: Request, res: Response) => {
-        connect()
-            .then(() => hometaskRepo.delete(req.body.id))
-            .then(() => res.send({ message: "success" }))
-            .catch((err) => error(err, res))
-            .finally(disconnect);
+        new Connection(Hometask, res).delete(req.body.id);
     }
 };
 

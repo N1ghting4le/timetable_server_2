@@ -3,22 +3,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const dataSource_1 = require("../dataSource");
-const error_1 = __importDefault(require("../error"));
+const dataSource_1 = __importDefault(require("../dataSource"));
+const note_entity_1 = require("../entities/note.entity");
 const notesController = {
     postNote: (req, res) => {
-        (0, dataSource_1.connect)()
-            .then(() => dataSource_1.noteRepo.save(dataSource_1.noteRepo.create(req.body)))
-            .then(() => res.send({ message: "success" }))
-            .catch((err) => (0, error_1.default)(err, res))
-            .finally(dataSource_1.disconnect);
+        new dataSource_1.default(note_entity_1.Note, res).add(req.body);
     },
     deleteNote: (req, res) => {
-        (0, dataSource_1.connect)()
-            .then(() => dataSource_1.noteRepo.delete(req.body.id))
-            .then(() => res.send({ message: "success" }))
-            .catch((err) => (0, error_1.default)(err, res))
-            .finally(dataSource_1.disconnect);
+        new dataSource_1.default(note_entity_1.Note, res).delete(req.body.id);
     }
 };
 exports.default = notesController;

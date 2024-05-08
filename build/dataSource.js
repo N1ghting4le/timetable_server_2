@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.hometaskRepo = exports.noteRepo = exports.dayRepo = exports.disconnect = exports.connect = void 0;
 const typeorm_1 = require("typeorm");
 const day_entity_1 = require("./entities/day.entity");
 const note_entity_1 = require("./entities/note.entity");
@@ -10,18 +9,53 @@ const AppDataSource = new typeorm_1.DataSource({
     url: process.env.POSTGRES_URL,
     entities: [day_entity_1.Day, note_entity_1.Note, hometask_entity_1.Hometask]
 });
-const dayRepo = AppDataSource.getRepository(day_entity_1.Day);
-exports.dayRepo = dayRepo;
-const noteRepo = AppDataSource.getRepository(note_entity_1.Note);
-exports.noteRepo = noteRepo;
-const hometaskRepo = AppDataSource.getRepository(hometask_entity_1.Hometask);
-exports.hometaskRepo = hometaskRepo;
-const connect = () => AppDataSource.initialize();
-exports.connect = connect;
-const disconnect = () => {
-    if (AppDataSource.isInitialized) {
-        AppDataSource.destroy();
+class Connection {
+    constructor(entity, res) {
+        this.open = () => AppDataSource.initialize();
+        this.success = () => this.res.send(Connection.successMsg);
+        this.repository = AppDataSource.getRepository(entity);
+        this.res = res;
     }
-};
-exports.disconnect = disconnect;
+    close() {
+        if (AppDataSource.isInitialized) {
+            AppDataSource.destroy();
+        }
+    }
+    error(err) {
+        console.error(err);
+        this.res.status(500).send(Connection.errorMsg);
+    }
+    getMany(options = {}, callback = (x) => x) {
+        this.open()
+            .then(() => this.repository.find(options))
+            .then(response => this.res.send(callback(response)))
+            .catch(this.error)
+            .finally(this.close);
+    }
+    add(data) {
+        this.open()
+            .then(() => this.repository.save(this.repository.create(data)))
+            .then(this.success)
+            .catch(this.error)
+            .finally(this.close);
+    }
+    delete(key) {
+        this.open()
+            .then(() => this.repository.delete(key))
+            .then(this.success)
+            .catch(this.error)
+            .finally(this.close);
+    }
+    replaceWith(data) {
+        this.open()
+            .then(() => this.repository.clear())
+            .then(() => this.repository.save(this.repository.create(data)))
+            .then(this.success)
+            .catch(this.error)
+            .finally(this.close);
+    }
+}
+Connection.errorMsg = { message: "Internal Server Error" };
+Connection.successMsg = { message: "OK" };
+exports.default = Connection;
 //# sourceMappingURL=dataSource.js.map
