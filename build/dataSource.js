@@ -13,8 +13,11 @@ class Connection {
     constructor(entity, res) {
         this.open = () => AppDataSource.initialize();
         this.success = () => this.res.send(Connection.successMsg);
-        this.repository = AppDataSource.getRepository(entity);
+        this._repository = AppDataSource.getRepository(entity);
         this.res = res;
+    }
+    get repository() {
+        return this._repository;
     }
     close() {
         if (AppDataSource.isInitialized) {
@@ -27,29 +30,21 @@ class Connection {
     }
     getMany(options = {}, callback = (x) => x) {
         this.open()
-            .then(() => this.repository.find(options))
+            .then(() => this._repository.find(options))
             .then(response => this.res.send(callback(response)))
             .catch(this.error)
             .finally(this.close);
     }
     add(data) {
         this.open()
-            .then(() => this.repository.save(this.repository.create(data)))
+            .then(() => this._repository.save(this._repository.create(data)))
             .then(this.success)
             .catch(this.error)
             .finally(this.close);
     }
     delete(key) {
         this.open()
-            .then(() => this.repository.delete(key))
-            .then(this.success)
-            .catch(this.error)
-            .finally(this.close);
-    }
-    replaceWith(data) {
-        this.open()
-            .then(() => this.repository.clear())
-            .then(() => this.repository.save(this.repository.create(data)))
+            .then(() => this._repository.delete(key))
             .then(this.success)
             .catch(this.error)
             .finally(this.close);

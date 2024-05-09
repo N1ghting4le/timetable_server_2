@@ -12,34 +12,38 @@ const AppDataSource = new DataSource({
 });
 
 class Connection<Entity> {
-    private repository: Repository<Entity>;
+    private _repository: Repository<Entity>;
     private res: Response;
     private static errorMsg = { message: "Internal Server Error" };
     private static successMsg = { message: "OK" };
 
     constructor(entity: EntityTarget<Entity>, res: Response) {
-        this.repository = AppDataSource.getRepository(entity);
+        this._repository = AppDataSource.getRepository(entity);
         this.res = res;
     }
 
-    private open = () => AppDataSource.initialize();
+    get repository() {
+        return this._repository;
+    }
 
-    private close() {
+    open = () => AppDataSource.initialize();
+
+    close() {
         if (AppDataSource.isInitialized) {
             AppDataSource.destroy();
         } 
     }
 
-    private error(err: Errback) {
+    success = () => this.res.send(Connection.successMsg);
+
+    error(err: Errback) {
         console.error(err);
         this.res.status(500).send(Connection.errorMsg);
     }
 
-    private success = () => this.res.send(Connection.successMsg);
-
     getMany(options: FindManyOptions<Entity> = {}, callback: EntityCb<Entity> = (x) => x) {
         this.open()
-            .then(() => this.repository.find(options))
+            .then(() => this._repository.find(options))
             .then(response => this.res.send(callback(response)))
             .catch(this.error)
             .finally(this.close);
@@ -47,7 +51,7 @@ class Connection<Entity> {
 
     add(data: DeepPartial<Entity>) {
         this.open()
-            .then(() => this.repository.save(this.repository.create(data)))
+            .then(() => this._repository.save(this._repository.create(data)))
             .then(this.success)
             .catch(this.error)
             .finally(this.close);
@@ -55,16 +59,7 @@ class Connection<Entity> {
 
     delete(key: EntityKey<Entity>) {
         this.open()
-            .then(() => this.repository.delete(key))
-            .then(this.success)
-            .catch(this.error)
-            .finally(this.close);
-    }
-
-    replaceWith(data: DeepPartial<Entity>) {
-        this.open()
-            .then(() => this.repository.clear())
-            .then(() => this.repository.save(this.repository.create(data)))
+            .then(() => this._repository.delete(key))
             .then(this.success)
             .catch(this.error)
             .finally(this.close);

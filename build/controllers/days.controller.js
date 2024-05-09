@@ -8,7 +8,14 @@ const dataSource_1 = __importDefault(require("../dataSource"));
 const day_entity_1 = require("../entities/day.entity");
 const daysController = {
     resetDays: (req, res) => {
-        new dataSource_1.default(day_entity_1.Day, res).replaceWith(req.body);
+        const connection = new dataSource_1.default(day_entity_1.Day, res);
+        const repository = connection.repository;
+        connection.open()
+            .then(() => repository.clear())
+            .then(() => repository.save(repository.create(req.body)))
+            .then(connection.success)
+            .catch(connection.error)
+            .finally(connection.close);
     },
     getDays: (req, res) => {
         new dataSource_1.default(day_entity_1.Day, res).getMany({
